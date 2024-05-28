@@ -4,7 +4,7 @@ const { createUser, getUsers, updateUser, deleteUser, loginUser }
 = require('../controller/user.controller');
 //const authenticateToken = require('../middleware/authenticateToken');
 
-router.post('/register', createUser);
+router.post('/register', (req, res) => createUser(req, res));
 router.post('/login', loginUser);
 router.get('/users', getUsers);
 router.put('/updateUser', updateUser);

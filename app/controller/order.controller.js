@@ -1,32 +1,40 @@
 const Sequelize = require("sequelize");
 const order = require("../models/order.model");
 const orderFood = require ("../models/ManyToMany/OrderFoods.models")
+const food = require("../models/food.model")
 
-const orderFoodsRelationship = (req, res) => {
+const orderFoodsRelationship = async (req, res) => {
     try {
+        const orderResult = await order.findOne({where: {buyer_name: req.body.nameBuyer}});
+        console.log(orderResult)
         orderFood.create({
-            OrderOrderId: req.body.order_id,
+            OrderOrderId: orderResult.order_id,
             FoodFoodId: req.body.food_id,
-            quantity: req.body.quantity
-        }).then(result => res.status(400).send({"Order Details": result}))
-        .catch(error => res.status(400).send({"Error Details":error}));
+            quantity: req.body.quantity,
+            total_price: req.body.total_price
+        }).then(result => res.status(200).send({"Order Details": result}))
+        .catch(error => res.status(400).send({"Error Details":error.message}));
     }catch(e) {
+
+        res.status(500).send({"Error Details #orderFoodsRelationship":e.message})
         console.log(e.message);
     }
 }
 
 const createOrder = async (req, res) => {
     try {
+    console.log(req.body)
         order.create({
-            nameBuyer: req.body.nameBuyer,
-            purchaseNumber: req.body.purchaseNumber,
-            orderDescription: req.body.orderDescription,
-            orderTable: req.body.orderTable,
-        }).then((req, res) => {
+            buyer_name: req.body.nameBuyer,
+            purchase_number: req.body.purchaseNumber,
+            order_description: req.body.orderDescription,
+            order_table: req.body.orderTable,
+        }).then(() => {
             return orderFoodsRelationship(req, res)
         })
-        .catch(error => res.status(400).send({"Error Details":error}))
+        .catch((error) => res.status(400).send({"Error Details":error.message}))
     }catch(e) {
+        res.status(500).send({"Error Details #createOrder":e.message})
         console.log(e.message)
     };
 }
@@ -34,12 +42,16 @@ const createOrder = async (req, res) => {
 
 const getOrder = async (req, res) => {
     try {
-        await orderFood.findAll()
+        await order.findAll({
+            include: {
+                model: await food
+            }
+        })
         .then(orderFood => {
             return res.status(200).send(orderFood);
         })
         .catch(error => {
-            return res.status(200).send(error);
+            return res.status(400).send(error.message);
         });
     }catch(e) {
         res.status(500).send(e.message)

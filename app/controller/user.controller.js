@@ -18,6 +18,7 @@ const userRolesRelationship = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
+        console.log(req.body)
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         const user = await User.create({
             name: req.body.name,

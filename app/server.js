@@ -8,10 +8,16 @@ const models = require("./models/index.model")
 
 const port = process.env.PORT || 8080
 
+//app.use('/', router);
+
+app.use(express.json())
+app.use('/api', router);
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 sequelize.sync().then();
 
-app.get('/', function(req, res) {
+app.get('/api', function(req, res) {
     res.json({mensaje: "Server is up!"});
 });
 
@@ -23,9 +29,7 @@ console.log(`API escuchando en el http://localhost:${port}`)
 // })
 
 
-app.use('/api', router);
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(bodyParser.json())
+
 
 
 // router.post('/', function(req, res) {

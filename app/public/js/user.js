@@ -1,6 +1,6 @@
 document.getElementById('createUserForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-
+    
     const name = document.getElementById('name').value;
     const lastname = document.getElementById('lastname').value;
     const username = document.getElementById('username').value;

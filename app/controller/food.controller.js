@@ -7,12 +7,12 @@ const createFood = async (req, res) => {
             food_name: req.body.food_name,
             food_price: req.body.food_price,
             food_description: req.body.food_description,
-        }).then((req, res) => {
+        }).then(() => {
             return res.status(200).send({message: `${req.body.food_name} succesfully agregate`});
         })
-        .catch(error => res.status(400).send({"Error Details":error}))
+        .catch(error => res.status(400).send({"Error Details":error.message}))
     }catch(e) {
-        console.log(e.message)
+        res.status(500).send({"Error Details":error.message})
     };
 }
 
